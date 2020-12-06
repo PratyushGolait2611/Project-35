@@ -26,14 +26,9 @@ function setup() {
     lastFed = data.val();
   });
 
-  //read game state from database
-  readState = database.ref('gameState');
-  readState.on("value", function (data) {
-    gameState = data.val();
-  });
 
   dog = createSprite(800, 400, 150, 150);
-  dog.addImage(dogImageHappy);
+  dog.addImage(dogImage);
   dog.scale = 0.15;
 
   feed = createButton("Feed the dog");
@@ -46,25 +41,10 @@ function setup() {
 }
 
 function draw() {
+
   currentTime = hour();
 
-  if (currentTime == (lastFed + 1)) {
-    update("NOT HUNGRY");
-  }
-  else {
-    update("Hungry")
-    foodObj.display();
-  }
-
-  if (gameState != "Hungry") {
-    feed.hide();
-    addFood.hide();
-    dog.remove();
-  } else {
-    feed.show();
-    addFood.show();
-    dog.addImage(dogImage);
-  }
+  foodObj.display();
 
   drawSprites();
 }
@@ -83,7 +63,6 @@ function feedDog() {
   database.ref('/').update({
     Food: foodObj.getFoodStock(),
     FeedTime: hour(),
-    gameState: "Hungry"
   })
 }
 
@@ -95,9 +74,3 @@ function addFoods() {
   })
 }
 
-//update gameState
-function update(state) {
-  database.ref('/').update({
-    gameState: state
-  })
-}
